@@ -1,0 +1,100 @@
+{% extends "base.html" %} {% block content %} {% load static %}
+<link href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="{% static 'app/datatables/dataTables.bootstrap.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'app/content/modal.css' %}" />
+
+<br/>
+
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">
+        <h4 class="panel-title pull-left" style="padding-top: 7.5px;">{{ title }}</h4>
+        <div class="btn-group pull-right">
+            <a class="btn btn-sm btn-success" href="create">
+                <span class="glyphicon glyphicon-plus"></span> Add New Chapter</a>
+        </div>
+    </div>
+
+    <div class="panel-body">
+        <div>
+            <div class="col-sm-3">
+                <br />
+                <br />
+                <div class="list-group" id="list-tab" role="tablist">
+
+                    <div class="input-group">
+
+                        <input id="search" type="text" class="form-control" placeholder="Search" />
+                        <span class="input-group-addon">
+                            <i class="glyphicon glyphicon-search"></i>
+                        </span>
+                    </div>
+                    <br /> {% for course in courses %}
+                    <a class="list-group-item list-group-item-action" onclick="getindex({{course.id}})"> {{course.Name}}</a>
+                    {% endfor %}
+
+
+                </div>
+
+
+
+            </div>
+
+            <div class="col-sm-9">
+
+                <div id="divdata">
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+{% endblock %} {% block scripts %} {% load static %}
+<script src="{% static 'app/scripts/jquery.validate.min.js' %}"></script>
+<script src="{% static 'app/datatables/jquery.dataTables.js' %}"></script>
+<script src="{% static 'app/datatables/dataTables.bootstrap.js' %}"></script>
+
+
+<script>
+
+    $("#list-tab").on("click", "a", function (e) {
+        var elems = document.querySelectorAll(".active");
+        $(elems[0]).removeClass("active");
+
+        $(e.target).addClass("active");
+    });
+    $(function () {
+        $('#search').keyup(function () {
+            var current_query = $('#search').val().toLowerCase();
+            if (current_query !== "") {
+                $(".list-group a").hide();
+                $(".list-group a").each(function () {
+                    var current_keyword = $(this).text().toLowerCase();
+                    if (current_keyword.indexOf(current_query) >= 0) {
+                        $(this).show();
+                    };
+                });
+            } else {
+                $(".list-group a").show();
+            };
+        });
+    });
+</script>
+<script>
+    function getindex(id) {
+        $.ajax({
+            type: "Get",
+            url: "/chapters/getchapters/" + id,
+            success: function (data) {
+                $('#divdata').html(data);
+            }
+        });
+    };
+</script> {% endblock %}

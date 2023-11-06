@@ -1,0 +1,56 @@
+{% extends "base.html" %} {% block content %} {% load static %}
+
+<br/>
+
+<div class="panel panel-success">
+    <div class="panel-heading clearfix">
+        <h4 class="panel-title pull-left" style="padding-top: 7.5px;">{{ title }}</h4>
+        <div class="btn-group pull-right">
+            <a class="btn btn-sm btn-success" href="/questions/create">
+                <span class="glyphicon glyphicon-plus"></span> Add New Question</a>
+            <a class="btn btn-sm btn-success" href="/exams/create">
+                <span class="glyphicon glyphicon-plus"></span> Add New Exam</a>
+            <a class="btn btn-sm btn-success" href="/exams/">
+                <span class="glyphicon glyphicon-home"></span> Exams</a>
+        </div>
+    </div>
+
+    <div class="panel-body">
+        <div>
+            <h4>
+                <strong>Exam Date : </strong>{{exam.Exam_Date}}</h4>
+            <h4>
+                <strong>Exam Time : </strong>{{exam.Time}}</h4>
+            <h4>
+                <strong>Course : </strong>{{exam.Course.Name}}</h4>
+
+        </div>
+        <div>
+
+            <hr>
+            <br/>
+            <ol>
+                {% for qs in questions %}
+
+                <div class="alert alert-default">
+                    <b>
+                        <li>
+                            <h4> {{qs.Header}}</h4>
+                            <ol type="a">
+                                <li>{{qs.Ans1}}</li>
+                                <li>{{qs.Ans2}}</li>
+                                <li>{{qs.Ans3}}</li>
+
+                            </ol>
+                        </li>
+                    </b>
+                </div>
+
+                {% endfor %}
+
+            </ol>
+        </div>
+
+
+
+        {% endblock %} {% block scripts %} {% load static %} {% endblock %}

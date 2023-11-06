@@ -1,0 +1,119 @@
+<!-- <h1>{{title}}</h1> -->
+<table id="tbb" class="table table-bordered table-hover table-responsive table-striped">
+    <thead>
+        <tr>
+            <th>Header</th>
+            <th>Difficulty</th>
+            <th>Objective</th>
+            <th>Chapter</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for qs in questions %}
+        <tr>
+            <td>{{ qs.Header }}</td>
+
+            <td>{{ qs.Difficulty }}</td>
+            <td>{{ qs.Objective }}</td>
+            <td>{{ qs.Chapter.Name }}</td>
+
+
+            <td>
+                <center>
+                    <a class="btn btn-sm btn-info" onclick="getquestions2('{{qs.id}}')">
+                        <span class="glyphicon glyphicon-list-alt"></span> Details</a>
+                    <a class="btn btn-sm btn-danger" onclick="remvefromexam('{{qs.id}}','{{exam.id}}',this)">
+                        <span class="glyphicon glyphicon-trash"></span> Remove From Exam</a>
+                </center>
+            </td>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="modal" id="modaltwo" tabindex="-1">
+    <div class="modal-dialog" style="width:80%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p>Question Information </p>
+            </div>
+            <div class="modal-body text-center">
+                <div id="divdataquedtions">
+
+                </div>
+                <div class="input-group text-center col-sm-offset-4 col-sm-4">
+                    <button id="btn" data-dismiss="modal" class="bb btn btn-primary">Go Back</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <p class="text-center">
+                    ITI
+                    <span class="bb close" data-dismiss="modal">&times;</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $('#tbb').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": true,
+            "pagingType": "full_numbers",
+            "pageLength": 7
+
+        });
+    });
+</script>
+<script>
+    function remvefromexam(id, eid, e) {
+        // alert(q+":"+e);
+        $.ajax({
+            url: '/exams/remvefromexam/' + id + '/' + eid,
+
+            ContentType: 'json',
+            success: function (data) {
+
+                hide(e);
+
+            }
+        });
+    }
+
+    function hide(e) {
+        global = e;
+        $(e.parentElement.parentElement.parentElement).hide(1000);
+
+        setTimeout(function () {
+            e.parentElement.parentElement.remove();
+        }, 1200);
+    };
+    function getquestions2(id) {
+        $.ajax({
+            type: "Get",
+            url: "/questions/getquestionsData/" + id,
+            success: function (data) {
+                $('#divdataquedtions').html(data);
+                mod2();
+            }
+        });
+    }
+    $(function () {
+        $(".mm").on("click",
+            function () {
+                $("#modaltwo").toggle(1000);
+            });
+    });
+
+    function mod2() {
+        $("#modaltwo").toggle(1000).modal();
+    }
+
+
+</script>

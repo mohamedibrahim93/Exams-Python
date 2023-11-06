@@ -1,0 +1,149 @@
+<!-- <h1>{{title}}</h1> -->
+<table id="tbb" class="table table-bordered table-hover table-responsive table-striped">
+    <thead>
+        <tr>
+            <th>Header</th>
+            <th>Difficulty</th>
+            <th>Objective</th>
+            <th>Chapter</th>
+
+            <th style="width: 30%;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for qs in questions %}
+        <tr>
+            <td>{{ qs.Header }}</td>
+
+            <td>{{ qs.Difficulty }}</td>
+            <td>{{ qs.Objective }}</td>
+            <td>{{ qs.Chapter.Name }}</td>
+
+
+            <td>
+                <center>
+                    <a class="btn btn-sm btn-info" onclick="getquestions('{{qs.id}}')">
+                        <span class="glyphicon glyphicon-list-alt"></span> Details</a>
+                    <a class="btn btn-sm btn-warning" href="edit/{{ qs.id }}">
+                        <span class="glyphicon glyphicon-edit"></span> Edit</a>
+                    <button class="btn btn-sm btn-danger" onclick="confirmDel('{{qs.id}}',this)">
+                        <span class="glyphicon glyphicon-trash"></span> Delete</button>
+                </center>
+            </td>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div id="myModal" class="modal fade">
+    <div class="modal-dialog modal-confirm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="icon-box">
+                    <i class="material-icons">&#xE5CD;</i>
+                </div>
+                <h4 class="modal-title">Are you sure?</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Do you really want to delete these records? This process cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                <button type="button" onclick="deleteCourse()" class="btn btn-danger" data-dismiss="modal">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="modalone" tabindex="-1">
+    <div class="modal-dialog" style="width:80%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p>Question Information </p>
+            </div>
+            <div class="modal-body text-center">
+                <div id="divdatamodal">
+
+                </div>
+                <div class="input-group text-center col-sm-offset-4 col-sm-4">
+                    <button id="btn" data-dismiss="modal" class="bb btn btn-primary">Go Back</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <p class="text-center">
+                    ITI
+                    <span class="bb close" data-dismiss="modal">&times;</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $('#tbb').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": true,
+            "pagingType": "full_numbers",
+            "pageLength": 7
+
+        });
+    });
+</script>
+<script>
+    function deleteCourse() {
+        //  alert(c);
+        $.ajax({
+            url: '/questions/delete/' + c,
+
+            ContentType: 'json',
+            success: function (data) {
+
+                //  alert("Acdds.");
+                hide(e);
+
+
+            }
+        });
+    }
+    var c;
+    var e;
+    function confirmDel(_c, _e) {
+        $("#myModal").modal();
+        c = _c;
+        e = _e;
+    }
+
+    function hide(e) {
+        global = e;
+        $(e.parentElement.parentElement.parentElement).hide(1000);
+
+        setTimeout(function () {
+            e.parentElement.parentElement.remove();
+        }, 1200);
+    };
+    function getquestions(id) {
+        $.ajax({
+            type: "Get",
+            url: "/questions/getquestionsData/" + id,
+            success: function (data) {
+                $('#divdatamodal').html(data);
+                mod();
+            }
+        });
+    }
+    $(function () {
+        $(".bb").on("click",
+            function () {
+                $("#modalone").toggle(1000);
+            });
+    });
+
+    function mod() {
+        $("#modalone").toggle(1000).modal();
+    }
+
+</script>

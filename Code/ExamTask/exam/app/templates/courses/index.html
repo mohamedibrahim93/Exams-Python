@@ -1,0 +1,134 @@
+{% extends "base.html" %} {% block content %} {% load static %}
+<link href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="{% static 'app/datatables/dataTables.bootstrap.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'app/content/modal.css' %}" />
+
+<br/>
+
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">
+        <h4 class="panel-title pull-left" style="padding-top: 7.5px;">{{ title }}</h4>
+        <div class="btn-group pull-right">
+            <a class="btn btn-sm btn-success" href="create">
+                <span class="glyphicon glyphicon-plus"></span> Add New Course</a>
+        </div>
+    </div>
+
+    <div class="panel-body">
+
+        <div class="row">
+            <div class="col-md-12">
+                <section>
+                    <table id="tb" class="table table-bordered table-hover table-responsive table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Duration</th>
+                                <th>Num Of Chapters</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for course in courses %}
+                            <tr>
+                                <td>{{ course.Name }}</td>
+                                <td>{{ course.Duration }}</td>
+                                <td>{{ course.NumChapters }}</td>
+
+
+                                <td>
+                                    <center>
+                                        <a class="btn btn-sm btn-warning" href="edit/{{ course.id }}">
+                                            <span class="glyphicon glyphicon-edit"></span> Edit</a>
+                                        <button class="btn btn-sm btn-danger" onclick="confirmDel({{course.id}},this)">
+                                            <span class="glyphicon glyphicon-trash"></span> Delete</button>
+                                    </center>
+                                </td>
+                                <!-- <a class="btn btn-sm btn-danger" href="delete/{{ course.id }}">
+                                <span class="glyphicon glyphicon-trash"></span> Delete</a></center></td> -->
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                </section>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div id="myModal" class="modal fade">
+    <div class="modal-dialog modal-confirm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="icon-box">
+                    <i class="material-icons">&#xE5CD;</i>
+                </div>
+                <h4 class="modal-title">Are you sure?</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Do you really want to delete these records? This process cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                <button type="button" onclick="deleteCourse()" class="btn btn-danger" data-dismiss="modal">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %} {% block scripts %} {% load static %}
+<script src="{% static 'app/scripts/jquery.validate.min.js' %}"></script>
+<script src="{% static 'app/datatables/jquery.dataTables.js' %}"></script>
+<script src="{% static 'app/datatables/dataTables.bootstrap.js' %}"></script>
+<script>
+    $(function () {
+        $('#tb').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": true,
+            "pagingType": "full_numbers",
+            "pageLength": 7
+
+        });
+    });
+</script>
+<script>
+    function deleteCourse() {
+        //  alert(c);
+        $.ajax({
+            url: '/courses/delete/' + c,
+
+            ContentType: 'json',
+            success: function (data) {
+
+                //  alert("Acdds.");
+                hide(e);
+
+
+            }
+        });
+    }
+    var c;
+    var e;
+    function confirmDel(_c, _e) {
+        $("#myModal").modal();
+        c = _c;
+        e = _e;
+    }
+
+    function hide(e) {
+        global = e;
+        $(e.parentElement.parentElement.parentElement).hide(1000);
+
+        setTimeout(function () {
+            e.parentElement.parentElement.remove();
+        }, 1200);
+    };
+</script> {% endblock %}

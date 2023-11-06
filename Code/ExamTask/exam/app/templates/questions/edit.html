@@ -1,0 +1,207 @@
+{% extends "base.html" %} {% block content %} {% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'app/content/bootstrap-select.css' %}" />
+
+<br/>
+
+<div class="panel panel-warning">
+    <div class="panel-heading clearfix">
+        <h4 class="panel-title pull-left" style="padding-top: 7.5px;">{{ title }}</h4>
+        <div class="btn-group pull-right">
+            <a class="btn btn-sm btn-success" href="/questions/">
+                <span class="glyphicon glyphicon-home"></span> Questions</a>
+        </div>
+    </div>
+
+    <div class="panel-body">
+        <div class="alert alert-danger col-md-12" style="display: none" id="cr">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <strong>Header Text is exists</strong>
+        </div>
+        <div class="col-sm-3">
+
+            <div class="list-group" id="list-tab" role="tablist">
+
+                <div class="input-group">
+
+                    <input id="search" type="text" class="form-control" placeholder="Search" />
+                    <span class="input-group-addon">
+                        <i class="glyphicon glyphicon-search"></i>
+                    </span>
+                </div>
+                <br /> {% for course in courses %}
+                <a class="list-group-item list-group-item-action" onclick="getindex('{{course.id}}',false)"> {{course.Name}}</a>
+                {% endfor %}
+
+
+            </div>
+
+
+
+        </div>
+
+        <div class="col-md-9">
+
+            <form action="update/{{question.id}}" method="post" class="form-horizontal">
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <strong>Error : </strong> {{form.data.errors}}
+                </div>
+                {% endif %} {% csrf_token %} {{ form.non_field_errors }}
+                <div class="form-group">
+                    {{ form.Header.errors }}
+                    <label for="Header" class="col-md-3 control-label">Question Header</label>
+                    <div class="col-md-9">
+                        {{ form.Header }}
+                    </div>
+                </div>
+
+                {{ form.non_field_errors }}
+                <div class="form-group">
+                    {{ form.Difficulty.errors }}
+                    <label for="Difficulty" class="col-md-3 control-label">Difficulty</label>
+                    <div class="col-md-9">
+                        {{ form.Difficulty }}
+                    </div>
+                </div>
+
+                {{ form.non_field_errors }}
+                <div class="form-group">
+                    {{ form.Objective.errors }}
+                    <label for="Objective" class="col-md-3 control-label">Objective</label>
+                    <div class="col-md-9">
+                        {{ form.Objective }}
+                    </div>
+                </div>
+
+                {{ form.non_field_errors }}
+                <div class="form-group">
+                    {{ form.Ans1.errors }}
+                    <label for="Ans1" class="col-md-3 control-label">Answer 1</label>
+                    <div class="col-md-9">
+                        {{ form.Ans1 }}
+                    </div>
+                </div>
+                {{ form.non_field_errors }}
+                <div class="form-group">
+                    {{ form.Ans2.errors }}
+                    <label for="Ans2" class="col-md-3 control-label">Answer 2</label>
+                    <div class="col-md-9">
+                        {{ form.Ans2 }}
+                    </div>
+                </div>
+                {{ form.non_field_errors }}
+                <div class="form-group">
+                    {{ form.Ans3.errors }}
+                    <label for="Ans3" class="col-md-3 control-label">Answer 3</label>
+                    <div class="col-md-9">
+                        {{ form.Ans3 }}
+                    </div>
+                </div>
+                {{ form.non_field_errors }}
+                <div class="form-group">
+                    {{ form.CorrectAns.errors }}
+                    <label for="CorrectAns" class="col-md-3 control-label">Correct Answer</label>
+                    <div class="col-md-9">
+                        {{ form.CorrectAns }}
+                    </div>
+                </div> {{ form.non_field_errors }}
+                <div class="form-group">
+                    {{ form.Chapter.errors }}
+                    <label for="Chapter" class="col-md-3 control-label">Chapter</label>
+                    <div class="col-md-9">
+                        {{ form.Chapter }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-3 col-md-6">
+                        <button type="submit" class="btn btn-warning">
+                            <span class="glyphicon glyphicon-edit"></span> Edit</button>
+                    </div>
+                </div>
+                {% if form.errors %}
+                <p class="validation-summary-errors"></p>
+                {% endif %}
+            </form>
+
+        </div>
+
+    </div>
+</div>
+
+
+{% endblock %} {% block scripts %} {% load static %}
+<script src="{% static 'app/scripts/jquery.validate.min.js' %}"></script>
+<script src="{% static 'app/scripts/bootstrap-select.js' %}"></script>
+
+<script>
+    $(function () {
+
+        $("#id_Header").val("{{question.Header}}");
+        $("#id_Ans1").val("{{question.Ans1}}");
+        $("#id_Ans2").val("{{question.Ans2}}");
+        $("#id_Ans3").val("{{question.Ans3}}");
+
+        $("#id_Difficulty").val("{{question.Difficulty}}").change();
+        $("#id_Objective").val("{{question.Objective}}").change();
+        $("#id_CorrectAns").val("{{cra}}").change();
+
+        getindex("{{chapter.Course.id}}", true);
+
+
+
+        $("input").addClass("form-control")
+
+
+    });
+
+</script>
+<script>
+
+    $("#list-tab").on("click", "a", function (e) {
+        var elems = document.querySelectorAll(".active");
+        $(elems[0]).removeClass("active");
+
+        $(e.target).addClass("active");
+    });
+    $(function () {
+        $('#search').keyup(function () {
+            var current_query = $('#search').val().toLowerCase();
+            if (current_query !== "") {
+                $(".list-group a").hide();
+                $(".list-group a").each(function () {
+                    var current_keyword = $(this).text().toLowerCase();
+                    if (current_keyword.indexOf(current_query) >= 0) {
+                        $(this).show();
+                    };
+                });
+            } else {
+                $(".list-group a").show();
+            };
+        });
+    });
+</script>
+<script>
+    function getindex(id, state) {
+        let dropdown = $('#id_Chapter');
+        dropdown.empty();
+        dropdown.prop('selectedIndex', 0);
+
+        //  alert(e);
+        $.ajax({
+            type: "Get",
+            url: "/questions/getchapters/" + id,
+            success: function (data) {
+                g = data;
+                $.each(data, function (key, entry) {
+                    dropdown.append($('<option></option>').attr('value', entry.id).text(entry.Name));
+                })
+                if (state == true) {
+                    $("#id_Chapter").val("{{chapter.id}}").change();
+
+                }
+
+            }
+        });
+    }
+</script> {% endblock %}
